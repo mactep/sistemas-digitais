@@ -1,8 +1,8 @@
 // Define as portas dos segmentos
-int unidade = 0;
-int dezena = 0;
+int unidade = 0; // valores que representam o numero mostrado no display das unidades
+int dezena = 0; // valores que representam o numero mostrado no display das dezenas
 int catodo_unidade = 9; // portas responsáveis por multiplexar os displays
-int catodo_dezena = 10;
+int catodo_dezena = 10; // portas responsáveis por multiplexar os displays
 int a = 2;
 int b = 3;
 int c = 4;
@@ -25,34 +25,39 @@ int numeros[10][7] = {
 };
 
 void setup() {
+  // Define as portas contidas no vetor segmentos como saida
   pinMode(catodo_unidade, OUTPUT);
   pinMode(catodo_dezena, OUTPUT);
   for (int i = 0; i < 7; i++) {
-    pinMode(segmentos[i], OUTPUT); // Define as portas contidas no vetor segmentos como saida
+    pinMode(segmentos[i], OUTPUT);
   }
 }
 
 void loop() {
-  if (unidade == 9) {
-    unidade = 0;
-    dezena += 1;
-  } else if (dezena == 9 && unidade == 9) {
+  if (dezena == 9 && unidade == 9) { // checa se o contador atingiu 99, voltando a 0
     unidade = 0;
     dezena = 0;
-  } else {
+  } else if (unidade == 9) { // checa se o contador atingiu 9 nas unidades, adicionando 1 a dezena
+    unidade = 0;
+    dezena += 1;
+  } else { // incrementa o numero em 1
     unidade += 1;
   }
-  digitalWrite(catodo_unidade, HIGH);
-  digitalWrite(catodo_dezena, LOW);
-  for (int i = 0; i < 7; i++) {
-    digitalWrite(segmentos[i], numeros[unidade][i]);
+  for (int j = 0; j < 10; j++) { // faz o ciclo 10 vezes para dar tempo de ver (displays piscam rapido)
+    digitalWrite(catodo_unidade, LOW); // habilita o display das unidades
+    digitalWrite(catodo_dezena, HIGH); // desabilita o das dezenas
+    for (int i = 0; i < 7; i++) {
+      // configura os niveis nos segmentos do display das unidades para mostrar o numero armazenado na variavel unidade
+      digitalWrite(segmentos[i], numeros[unidade][i]);
+    }
+    delay(10); // para por 10 segundos
+    // faz o mesmo que o de cima, só que agora para as dezenas
+    digitalWrite(catodo_unidade, HIGH);
+    digitalWrite(catodo_dezena, LOW);
+    for (int i = 0; i < 7; i++) {
+      digitalWrite(segmentos[i], numeros[dezena][i]);
+    }
+    delay(10);
   }
-  delay(15);
-  digitalWrite(catodo_unidade, LOW);
-  digitalWrite(catodo_dezena, HIGH);
-  for (int i = 0; i < 7; i++) {
-    digitalWrite(segmentos[i], numeros[dezena][i]);
-  }
-  delay(15);
 }
 
